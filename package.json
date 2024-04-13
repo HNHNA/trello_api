@@ -1,0 +1,14 @@
+{
+  "name": "trello_api",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Project Trello Clone by Hanzdev",
+  "main": "src/server.js",
+  "author": "Hanzdev",
+  "license": "MIT",
+  "private": true,
+
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
