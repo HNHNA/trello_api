@@ -2,7 +2,8 @@
 
 
 import express from 'express'
-import { CONNECT_DB, GET_DB } from '~/config/mongodb'
+import exitHook from 'async-exit-hook'
+import { CONNECT_DB, GET_DB, CLOSE_DB } from '~/config/mongodb'
 
 const START_SERVER = () => {
 
@@ -19,13 +20,20 @@ const START_SERVER = () => {
   app.listen(port, hostname, () => {
     console.log(`3.Hello Hanzdev, Backend Server is running at ${ hostname }:${ port }/`)
   })
+
+  // Thực hiện các tác vụ cleanup trước khi dừng server
+  exitHook(() => {
+    console.log('4. Disconecting from MongoDB Cloud Atlas...')
+    CLOSE_DB()
+    console.log('5. Disconected from MongoDB Cloud Atlas')
+  })
 }
 
 // Chỉ khi kết nối =database thành công thì mới Start Server Backend lên.
 // Immediately-invokded / Anonymous Async Function (IIFE)
 (async () => {
   try {
-    console.log('1.Connecting to MongoDB CLoud Atlas')
+    console.log('1.Connecting to MongoDB CLoud Atlas...')
     await CONNECT_DB()
     console.log('2.Connected to MongoDB Cloud Atlas!')
 
@@ -36,8 +44,8 @@ const START_SERVER = () => {
   }
 })()
 
-
-// // Chỉ khi kết nối =database thành công thì mới Start Server Backend lên.
+// Cách khác:
+// Chỉ khi kết nối =database thành công thì mới Start Server Backend lên.
 // console.log('1.Connecting to MongoDB CLoud Atlas')
 // CONNECT_DB()
 //   .then(() => console.log('2.Connected to MongoDB Cloud Atlas!'))
