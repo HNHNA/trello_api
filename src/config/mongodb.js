@@ -1,5 +1,34 @@
-/**
- * Updated by trungquandev.com's author on August 17 2023
- * YouTube: https://youtube.com/@trungquandev
- * "A bit of fragrance clings to the hand that gives flowers!"
- */
+
+const MONGODB_URI = 'mongodb+srv://hanzdev:dXydt8dL688Fjlvo@cluster0-hanzdev.9032tdf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0-Hanzdev'
+const DATABASENAME = 'trello-hanzdev-mern-stack-pro'
+
+import { MongoClient, ServerApiVersion } from 'mongodb'
+
+// Khởi tạo một đối tượng trelloDatabaseInstance ban đầu là null ( vì chưa connect)
+let trelloDatabaseInstance = null
+
+// Tạo một đối tượng mongoClientInstance để connect tới MongoDB
+const mongoClientInstance = new MongoClient(MONGODB_URI, {
+  // Lưu ý cái serverApi có từ phiên bản 5.0 trở lên, có thể ko cần dùng nó, nếu dùng nó là chúng ta sẽ chỉ định một cái Stable API Version của MongoDB
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict : true,
+    deprecationErrors: true
+  }
+})
+
+// Kết nối tới Database
+export const CONNECT_DB = async () => {
+  // Gọi kết nối tới MongoDB Atlat với URI đã khai báo trong thân của clientInstance
+  await mongoClientInstance.connect()
+
+  // Kết nối thành công thì lấy ra Database theo tên và gán ngược nó lại vào biến trelloDatabaseInstance ở trên
+  trelloDatabaseInstance = mongoClientInstance.db(DATABASENAME)
+}
+
+// Function GET_DB (không asycn) này có nhiệm vụ export ra cái Trello Database Instance sau khi đã connect thành công tới MongoDB để chúng ta sử dụng ở nhiều nơi khác nhau trong code.
+// Lưu ý phải đảm bảo chỉ luôn gọi cái getDB này sau khi đã kết nối thành công tới MongoDB
+export const GET_DB = () => {
+  if (!trelloDatabaseInstance) throw new Error ('Must Connect to Database first')
+  return trelloDatabaseInstance
+}
