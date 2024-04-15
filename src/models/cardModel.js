@@ -25,10 +25,16 @@ const validateBeforeCreate = async (data) => {
 const createNew = async (data) => {
   try {
     const validData = await validateBeforeCreate(data)
+    // Biến đổi một số dữ liệu liên quan tới Object chuẩn chỉnh
+    const newCardToAdd = {
+      ...validData,
+      boardId: new ObjectId(validData.boardId), // ghi đè boardId thành Object
+      columnId: new ObjectId(validData.columnId)
+    }
     // console.log('validData:', validData)
-    const createdBoard = await GET_DB().collection(CARD_COLLECTION_NAME).insertOne(validData)
+    const createdCard = await GET_DB().collection(CARD_COLLECTION_NAME).insertOne(newCardToAdd)
 
-    return createdBoard
+    return createdCard
   } catch (error) { throw new Error(error)}
 }
 
@@ -40,6 +46,7 @@ const findOneById = async (id) => {
     return result
   } catch (error) { throw new Error(error)}
 }
+
 
 export const cardModel = {
   CARD_COLLECTION_NAME,
