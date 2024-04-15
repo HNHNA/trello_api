@@ -1,6 +1,6 @@
 /* eslint-disable quotes */
 import { cardModel } from "~/models/cardModel"
-
+import { columnModel } from "~/models/columnModel"
 
 const createNew = async( reqBody ) => {
   try {
@@ -14,6 +14,10 @@ const createNew = async( reqBody ) => {
     const getNewCard = await cardModel.findOneById(createdCard.insertedId)
 
     // ....
+    if (getNewCard) {
+      // Cập nhật mảng cardOrderIds trong collection columns
+      await columnModel.pushCardOrderIds(getNewCard)
+    }
 
     // Trả kết quả về, trong service phải luôn có return
     return getNewCard
