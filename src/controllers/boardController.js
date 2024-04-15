@@ -12,6 +12,7 @@ const createNew = async ( req, res, next ) => {
 
     // Điều hướng dữ liệu tấng Service
     const createBoard = await boardService.createNew(req.body)
+console.log('createBoard:', createBoard)
 
     // throw new ApiError(StatusCodes.BAD_GATEWAY, 'hanzdev error')
     // Có kết quả thì trả về phía Clients
