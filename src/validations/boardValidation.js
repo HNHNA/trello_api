@@ -1,5 +1,6 @@
 import Joi from 'joi'
 import { StatusCodes } from 'http-status-codes'
+import ApiError from '~/utils/ApiErrors'
 
 const createNew = async ( req, res, next ) => {
   // Mặc định chúng ta không cần custom message ở BE vì để cho FE tự validate và custom message cho đẹp
@@ -22,12 +23,15 @@ const createNew = async ( req, res, next ) => {
 
     // Validate dữ liệu xong thì cho request sang Controller
     next()
-    res.status(StatusCodes.CREATED).json({ message: ' post: from validation API create new board' })
+    // res.status(StatusCodes.CREATED).json({ message: ' post: from validation API create new board' })
   } catch (error) {
-    // console.log(error)
-    res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({
-      errors: new Error(error).message
-    })
+    // const errorMessage = new Error(error).message
+    // const customError = new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, errorMessage)
+    next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, new Error(error).message))
+
+    // res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({
+    //   errors: new Error(error).message
+    // })
   }
 }
 
