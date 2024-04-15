@@ -11,12 +11,12 @@ const createNew = async ( req, res, next ) => {
   //   console.log('req.jwtDecoded:', req.jwtDecoded)
 
     // Điều hướng dữ liệu tấng Service
-    const createBoard = await boardService.createNew(req.body)
+    const createdBoard = await boardService.createNew(req.body)
     // console.log('createBoard:', createBoard)
 
     // throw new ApiError(StatusCodes.BAD_GATEWAY, 'hanzdev error')
     // Có kết quả thì trả về phía Clients
-    res.status(StatusCodes.CREATED).json(createBoard)
+    res.status(StatusCodes.CREATED).json(createdBoard)
   } catch (error) {
     next(error)
     // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -25,6 +25,16 @@ const createNew = async ( req, res, next ) => {
   }
 }
 
+const getDetails = async ( req, res, next ) => {
+  try {
+    // console.log('req.params:', req.params)
+    const boardId = req.params.id
+    const board = await boardService.getDetails(boardId)
+    res.status(StatusCodes.OK).json(board)
+  } catch (error) { next(error) }
+}
+
 export const boardController = {
-  createNew
+  createNew,
+  getDetails
 }
