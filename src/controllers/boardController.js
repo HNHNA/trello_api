@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes'
-import ApiError from '~/utils/ApiErrors'
+import { boardService } from '~/services/boardService'
 
 const createNew = async ( req, res, next ) => {
   try {
@@ -10,10 +10,12 @@ const createNew = async ( req, res, next ) => {
   //   console.log('req.cookies:', req.cookies)
   //   console.log('req.jwtDecoded:', req.jwtDecoded)
 
+    // Điều hướng dữ liệu tấng Service
+    const createBoard = await boardService.createNew(req.body)
 
     // throw new ApiError(StatusCodes.BAD_GATEWAY, 'hanzdev error')
     // Có kết quả thì trả về phía Clients
-    res.status(StatusCodes.CREATED).json({ message: ' post: from Controller: API create new board' })
+    res.status(StatusCodes.CREATED).json(createBoard)
   } catch (error) {
     next(error)
     // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
