@@ -5,6 +5,7 @@ import { boardModel } from "~/models/boardModel"
 import { findOneById } from "~/models/boardModel"
 import ApiError from "~/utils/ApiErrors"
 import { StatusCodes } from "http-status-codes"
+import { cloneDeep } from "lodash"
 
 const createNew = async( reqBody ) => {
   try {
@@ -35,9 +36,25 @@ const getDetails = async( boardId ) => {
 
     const board = await boardModel.getDetails(boardId)
     if ( !board ) {
-      throw new ApiError(StatusCodes.NOT_FOUND)
+      throw new ApiError(StatusCodes.NOT_FOUND, 'Board not found')
     }
-    return board
+
+    // Deep Clone taoj ra một cái mới để xứ lý, không ảnh hưởng tới board ban đầu, tùy mục đích về sau mà có clone deep hay không
+    const resBoard = cloneDeep(board)
+    // console.log('resBoard', resBoard)
+
+    // Đưa card về đúng column của nó
+    resBoard.columns.forEach(column => {
+      // dùng equals này bởi vì ta hiểu ObjectId trong mongodb có support method equals
+      column.cards = resBoard.cards.filter(card => card.columnId.equals(column._id))
+      // covert ObjectId về string bằng hàm toString của Javasvcript
+      // column.cards = resBoard.cards.filter(card => card.columnId.toString() === column._id.toString())
+    })
+
+    // Xóa mảng Card khỏi board ban đầu
+    delete resBoard.cards
+
+    return resBoard
   } catch (error) { throw error }
 }
 
