@@ -11,7 +11,7 @@ const createNew = async ( req, res, next ) => {
   const correctConditon = Joi.object({
     title: Joi.string().required().min(3).max(50).trim().strict().messages({
       // Custom Message
-      'any.required': 'Title is required(hanzdev)'
+      // 'any.required': 'Title is required(hanzdev)'
     }),
     description: Joi.string().required().min(3).max(255).trim().strict(),
     type: Joi.string().valid(BOARD_TYPES.PUBLIC, BOARD_TYPES.PRIVATE).required()
@@ -37,6 +37,37 @@ const createNew = async ( req, res, next ) => {
   }
 }
 
+const update = async ( req, res, next ) => {
+  // Khonong dung require() tron trường hợp update
+  const correctConditon = Joi.object({
+    title: Joi.string().min(3).max(50).trim().strict(),
+    description: Joi.string().min(3).max(255).trim().strict(),
+    type: Joi.string().valid(BOARD_TYPES.PUBLIC, BOARD_TYPES.PRIVATE)
+  })
+
+  try {
+    // console.log('req.body:', req.body)
+    // Set abortEarly false trường hợp nhiều lỗi validation trả về tất cả
+    await correctConditon.validateAsync(req.body, {
+      abortEarly: false,
+      allowUnknown: true
+    })
+
+    // Validate dữ liệu xong thì cho request sang Controller
+    next()
+    // res.status(StatusCodes.CREATED).json({ message: ' post: from validation API create new board' })
+  } catch (error) {
+    // const errorMessage = new Error(error).message
+    // const customError = new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, errorMessage)
+    next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, new Error(error).message))
+
+    // res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({
+    //   errors: new Error(error).message
+    // })
+  }
+}
+
 export const boardValidation = {
-  createNew
+  createNew,
+  update
 }
