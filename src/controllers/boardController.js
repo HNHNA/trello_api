@@ -38,7 +38,7 @@ const update = async ( req, res, next ) => {
   try {
     const boardId = req.params.id
 
-    const updatedBoard = await boardService.getDetails(boardId, req.body)
+    const updatedBoard = await boardService.update(boardId, req.body)
     res.status(StatusCodes.OK).json(updatedBoard)
   } catch (error) { next(error) }
 }
